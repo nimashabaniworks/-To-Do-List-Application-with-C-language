@@ -1,0 +1,71 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+void displayTasks(const vector<string>& tasks) {
+    cout << "\nYour To-Do List:\n";
+    for (int i = 0; i < tasks.size(); i++) {
+        cout << i + 1 << ". " << tasks[i] << endl;
+    }
+}
+
+void saveTasksToFile(const vector<string>& tasks) {
+    ofstream file("tasks.txt");
+    for (const string& task : tasks) {
+        file << task << endl;
+    }
+    file.close();
+}
+
+void loadTasksFromFile(vector<string>& tasks) {
+    ifstream file("tasks.txt");
+    string task;
+    while (getline(file, task)) {
+        tasks.push_back(task);
+    }
+    file.close();
+}
+
+int main() {
+    vector<string> tasks;
+    loadTasksFromFile(tasks);
+
+    int choice;
+    string task;
+
+    while (true) {
+        cout << "\n1. View Tasks\n2. Add Task\n3. Remove Task\n4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore(); // To ignore the newline left by cin
+
+        if (choice == 1) {
+            displayTasks(tasks);
+        } else if (choice == 2) {
+            cout << "Enter a task: ";
+            getline(cin, task);
+            tasks.push_back(task);
+            saveTasksToFile(tasks);
+        } else if (choice == 3) {
+            int index;
+            displayTasks(tasks);
+            cout << "Enter the task number to remove: ";
+            cin >> index;
+            if (index > 0 && index <= tasks.size()) {
+                tasks.erase(tasks.begin() + index - 1);
+                saveTasksToFile(tasks);
+            } else {
+                cout << "Invalid task number.\n";
+            }
+        } else if (choice == 4) {
+            break;
+        } else {
+            cout << "Invalid choice. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
